@@ -19,7 +19,7 @@ namespace TiposDeValidacoes.Api
             return this;
         }
 
-        public Dictionary<string, bool> ValidarPropriedades()
+        public Dictionary<string, ValidationResult> ValidarPropriedades()
         {
             return PropertyValidation<T>.ValidarPropriedades(_objeto, _validations.ToArray());
         }
@@ -44,47 +44,71 @@ namespace TiposDeValidacoes.Api
             return value != null && !string.IsNullOrWhiteSpace(value.ToString());
         }
 
-        public static Dictionary<string, bool> ValidarPropriedades(T objeto, params PropertyValidation<T>[] propriedades)
+        public static Dictionary<string, ValidationResult> ValidarPropriedades(T objeto, params PropertyValidation<T>[] propriedades)
         {
-            var resultados = new Dictionary<string, bool>();
+            var resultados = new Dictionary<string, ValidationResult>();
 
             foreach (var propertyValidation in propriedades)
             {
-                var member = propertyValidation.Property.Body as MemberExpression ?? ((UnaryExpression)propertyValidation.Property.Body).Operand as MemberExpression;
-                if (member == null) throw new ArgumentException("A expressão deve ser uma propriedade.");
-
-                var propertyInfo = member.Member as PropertyInfo;
-                if (propertyInfo == null) throw new ArgumentException("A expressão deve ser uma propriedade.");
-
-                object valor = objeto;
-                var path = new List<string> { typeof(T).Name };
-                foreach (var part in member.ToString().Split('.').Skip(1))
-                {
-                    if (valor == null) break;
-                    propertyInfo = valor.GetType().GetProperty(part);
-                    if (propertyInfo == null) throw new ArgumentException($"Propriedade {part} não encontrada.");
-                    valor = propertyInfo.GetValue(valor);
-                    path.Add(part);
-                }
-
-                var isValid = propertyValidation.Validation(valor);
-                resultados.Add(string.Join(".", path), isValid);
+                var validationResult = ValidateProperty(objeto, propertyValidation);
+                resultados.Add(validationResult.PropertyPath, validationResult);
             }
 
             return resultados;
+        }
+
+        private static ValidationResult ValidateProperty(T objeto, PropertyValidation<T> propertyValidation)
+        {
+            var member = propertyValidation.Property.Body as MemberExpression ??
+                         ((UnaryExpression)propertyValidation.Property.Body).Operand as MemberExpression;
+            if (member == null) throw new ArgumentException("A expressão deve ser uma propriedade.");
+
+            var propertyInfo = member.Member as PropertyInfo;
+            if (propertyInfo == null) throw new ArgumentException("A expressão deve ser uma propriedade.");
+
+            object valor = objeto;
+            var path = new List<string> { typeof(T).Name };
+            foreach (var part in member.ToString().Split('.').Skip(1))
+            {
+                if (valor == null) break;
+                propertyInfo = valor.GetType().GetProperty(part);
+                if (propertyInfo == null) throw new ArgumentException($"Propriedade {part} não encontrada.");
+                valor = propertyInfo.GetValue(valor);
+                path.Add(part);
+            }
+
+            var isValid = propertyValidation.Validation(valor);
+            var propertyPath = string.Join(".", path);
+            var errorMessage = isValid ? null : $"A propriedade {propertyPath} é inválida.";
+
+            return new ValidationResult(isValid, errorMessage, propertyPath);
+        }
+    }
+
+    public class ValidationResult
+    {
+        public bool IsValid { get; }
+        public string ErrorMessage { get; }
+        public string PropertyPath { get; }
+
+        public ValidationResult(bool isValid, string errorMessage, string propertyPath)
+        {
+            IsValid = isValid;
+            ErrorMessage = errorMessage;
+            PropertyPath = propertyPath;
         }
     }
 
     public static class ValidationExtensions
     {
-        public static Dictionary<string, bool> Invalidos(this Dictionary<string, bool> resultados)
+        public static Dictionary<string, ValidationResult> Invalidos(this Dictionary<string, ValidationResult> resultados)
         {
-            return resultados.Where(r => !r.Value).ToDictionary(pair => pair.Key, pair => pair.Value);
+            return resultados.Where(r => !r.Value.IsValid).ToDictionary(pair => pair.Key, pair => pair.Value);
         }
 
-        public static Dictionary<string, bool> Validos(this Dictionary<string, bool> resultados)
+        public static Dictionary<string, ValidationResult> Validos(this Dictionary<string, ValidationResult> resultados)
         {
-            return resultados.Where(r => r.Value).ToDictionary(pair => pair.Key, pair => pair.Value);
+            return resultados.Where(r => r.Value.IsValid).ToDictionary(pair => pair.Key, pair => pair.Value);
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿//C:\repos\labs\TiposDeValidacoes\TiposDeValidacoes.Api\ClienteService.cs
+﻿using System.Collections.Generic;
 
 namespace TiposDeValidacoes.Api
 {
     public class ClienteService
     {
-        public Dictionary<string, bool> ProcessarCliente(Cliente cliente)
+        public Dictionary<string, ValidationResult> ProcessarCliente(Cliente cliente)
         {
             var resultados = new ValidationBuilder<Cliente>(cliente)
                 .AdicionarValidacao(c => c.Cpf, valor => !string.IsNullOrWhiteSpace(valor as string) && valor.ToString().Length == 11)
@@ -16,6 +16,7 @@ namespace TiposDeValidacoes.Api
                 .Invalidos();
 
             // Lógica adicional de processamento, se necessário
+
             return resultados;
         }
     }

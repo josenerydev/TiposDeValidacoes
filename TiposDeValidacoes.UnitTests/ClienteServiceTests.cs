@@ -35,7 +35,7 @@ namespace TiposDeValidacoes.UnitTests
             var resultados = _clienteService.ProcessarCliente(cliente);
 
             // Assert
-            Assert.DoesNotContain(resultados, x => !x.Value);
+            Assert.Empty(resultados);
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace TiposDeValidacoes.UnitTests
             var resultados = _clienteService.ProcessarCliente(cliente);
 
             // Assert
-            Assert.False(resultados["Cliente.Cpf"]);
+            Assert.Contains("Cliente.Cpf", resultados.Keys);
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace TiposDeValidacoes.UnitTests
             var resultados = _clienteService.ProcessarCliente(cliente);
 
             // Assert
-            Assert.False(resultados["Cliente.Tipo"]);
+            Assert.Contains("Cliente.Tipo", resultados.Keys);
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace TiposDeValidacoes.UnitTests
             var resultados = _clienteService.ProcessarCliente(cliente);
 
             // Assert
-            Assert.False(resultados["Cliente.Endereco.CEP"]);
+            Assert.Contains("Cliente.Endereco.CEP", resultados.Keys);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace TiposDeValidacoes.UnitTests
             var resultados = _clienteService.ProcessarCliente(cliente);
 
             // Assert
-            Assert.False(resultados["Cliente.Nome"]);
+            Assert.Contains("Cliente.Nome", resultados.Keys);
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace TiposDeValidacoes.UnitTests
             var resultados = _clienteService.ProcessarCliente(cliente);
 
             // Assert
-            Assert.False(resultados["Cliente.Endereco"]);
+            Assert.Contains("Cliente.Endereco", resultados.Keys);
         }
 
         [Fact]
@@ -184,7 +184,7 @@ namespace TiposDeValidacoes.UnitTests
             var resultados = _clienteService.ProcessarCliente(cliente);
 
             // Assert
-            Assert.DoesNotContain(resultados, x => !x.Value);
+            Assert.Empty(resultados);
         }
 
         [Fact]
@@ -208,7 +208,7 @@ namespace TiposDeValidacoes.UnitTests
             var resultados = _clienteService.ProcessarCliente(cliente);
 
             // Assert
-            Assert.False(resultados["Cliente.Telefones"]);
+            Assert.Contains("Cliente.Telefones", resultados.Keys);
         }
 
         [Fact]
@@ -232,7 +232,7 @@ namespace TiposDeValidacoes.UnitTests
             var resultados = _clienteService.ProcessarCliente(cliente);
 
             // Assert
-            Assert.False(resultados["Cliente.Telefones"]);
+            Assert.Contains("Cliente.Telefones", resultados.Keys);
         }
     }
 }
