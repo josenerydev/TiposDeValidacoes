@@ -34,8 +34,8 @@ namespace TiposDeValidacoes.Api
                Validate<Cliente>(c => c.Cpf, valor => !string.IsNullOrWhiteSpace(valor as string) && valor.ToString().Length == 11),
                Validate<Cliente>(c => c.Nome),
                Validate<Cliente>(c => c.Endereco.CEP),
-               Validate<Cliente>(c => c.Tipo, valor => (TipoPessoa)valor != TipoPessoa.NaoDefinido)
-            );
+               Validate<Cliente>(c => c.Tipo, valor => (TipoPessoa)valor != TipoPessoa.Juridica)
+            ).Invalidos();
 
             // Aqui você pode adicionar lógica adicional de processamento se necessário
 
@@ -70,6 +70,19 @@ namespace TiposDeValidacoes.Api
             }
 
             return resultados;
+        }
+    }
+
+    public static class DictionaryExtensions
+    {
+        public static Dictionary<string, bool> Invalidos(this Dictionary<string, bool> resultados)
+        {
+            return resultados.Where(r => !r.Value).ToDictionary(pair => pair.Key, pair => pair.Value);
+        }
+
+        public static Dictionary<string, bool> Validos(this Dictionary<string, bool> resultados)
+        {
+            return resultados.Where(r => r.Value).ToDictionary(pair => pair.Key, pair => pair.Value);
         }
     }
 }
