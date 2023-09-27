@@ -1,35 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 
 namespace TiposDeValidacoes.Api
 {
+    public class PropertyValidation<T>
+    {
+        public Expression<Func<T, object>> Property { get; }
+        public Func<object, bool> Validation { get; }
+
+        public PropertyValidation(Expression<Func<T, object>> property, Func<object, bool> validation = null)
+        {
+            Property = property;
+            Validation = validation ?? DefaultValidation;
+        }
+
+        private bool DefaultValidation(object value)
+        {
+            return value != null && !string.IsNullOrWhiteSpace(value.ToString());
+        }
+    }
+
     public class ClienteService
     {
+        private static PropertyValidation<T> Validate<T>(Expression<Func<T, object>> property, Func<object, bool> validation = null)
+        {
+            return new PropertyValidation<T>(property, validation);
+        }
+
         public Dictionary<string, bool> ProcessarCliente(Cliente cliente)
         {
             var resultados = ValidarPropriedades(
                cliente,
-                    (c => c.Cpf, valor => !string.IsNullOrWhiteSpace(valor as string) && valor.ToString().Length == 11),
-                    (c => c.Nome, null), // Validacao padrão será usada
-                    (c => c.Endereco.CEP, null), // Validacao padrão será usada
-                    (c => c.Tipo, valor => (TipoPessoa)valor != TipoPessoa.NaoDefinido)
-                );
+               Validate<Cliente>(c => c.Cpf, valor => !string.IsNullOrWhiteSpace(valor as string) && valor.ToString().Length == 11),
+               Validate<Cliente>(c => c.Nome),
+               Validate<Cliente>(c => c.Endereco.CEP),
+               Validate<Cliente>(c => c.Tipo, valor => (TipoPessoa)valor != TipoPessoa.NaoDefinido)
+            );
 
             // Aqui você pode adicionar lógica adicional de processamento se necessário
 
             return resultados;
         }
 
-        public Dictionary<string, bool> ValidarPropriedades<T>(
-            T objeto, params (Expression<Func<T, object>> Propriedade, Func<object, bool> Validacao)[] propriedades)
+        public Dictionary<string, bool> ValidarPropriedades<T>(T objeto, params PropertyValidation<T>[] propriedades)
         {
             var resultados = new Dictionary<string, bool>();
 
-            foreach (var (prop, validacao) in propriedades)
+            foreach (var propertyValidation in propriedades)
             {
-                var member = prop.Body as MemberExpression ?? ((UnaryExpression)prop.Body).Operand as MemberExpression;
+                var member = propertyValidation.Property.Body as MemberExpression ?? ((UnaryExpression)propertyValidation.Property.Body).Operand as MemberExpression;
                 if (member == null) throw new ArgumentException("A expressão deve ser uma propriedade.");
 
                 var propertyInfo = member.Member as PropertyInfo;
@@ -46,7 +65,7 @@ namespace TiposDeValidacoes.Api
                     path.Add(part);
                 }
 
-                var isValid = validacao != null ? validacao(valor) : valor != null && !string.IsNullOrWhiteSpace(valor.ToString());
+                var isValid = propertyValidation.Validation(valor);
                 resultados.Add(string.Join(".", path), isValid);
             }
 
