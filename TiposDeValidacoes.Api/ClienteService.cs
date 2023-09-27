@@ -16,16 +16,10 @@ namespace TiposDeValidacoes.Api
             var resultados = validationBuilder.ValidarPropriedades();
             var resultadosInvalidos = resultados.Invalidos();
 
-            if (resultadosInvalidos.Any())
-            {
-                var mensagemErro = GerarMensagemErro(resultadosInvalidos);
-                throw new ArgumentException(mensagemErro);
-            }
-
-            return resultados;
+            return resultadosInvalidos;
         }
 
-        private string GerarMensagemErro(Dictionary<string, ValidationResult> resultadosInvalidos)
+        public string GerarMensagemErro(Dictionary<string, ValidationResult> resultadosInvalidos)
         {
             var nomesCamposInvalidos = resultadosInvalidos.Keys.ToList();
             var listaCamposInvalidos = string.Join(", ", nomesCamposInvalidos);

@@ -19,8 +19,15 @@ namespace TiposDeValidacoes.Api
         {
             try
             {
-                var resultados = _clienteService.ProcessarCliente(cliente);
-                return Ok(resultados);
+                var resultadosInvalidos = _clienteService.ProcessarCliente(cliente);
+
+                if (resultadosInvalidos.Any())
+                {
+                    var mensagemErro = _clienteService.GerarMensagemErro(resultadosInvalidos);
+                    throw new ArgumentException(mensagemErro);
+                }
+
+                return Ok();
             }
             catch (Exception ex)
             {
