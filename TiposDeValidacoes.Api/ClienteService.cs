@@ -1,29 +1,35 @@
-﻿using System.Collections.Generic;
+﻿using FluentValidation;
 
-namespace TiposDeValidacoes.Api
+using System.Collections.Generic;
+using System.Linq;
+
+using TiposDeValidacoes.Api;
+
+public class ClienteService
 {
-    public class ClienteService
+    private readonly IValidator<Cliente> _clienteValidator;
+
+    public ClienteService()
     {
-        public Dictionary<string, ValidationResult> ProcessarCliente(Cliente cliente)
-        {
-            var validationBuilder = new ValidationBuilder<Cliente>(cliente)
-                .AdicionarValidacao(c => c.Cpf, valor => !string.IsNullOrWhiteSpace(valor as string) && valor.ToString().Length == 11)
-                .AdicionarValidacao(c => c.Nome)
-                .AdicionarValidacao(c => c.Endereco.CEP)
-                .AdicionarValidacao(c => c.Tipo, valor => (TipoPessoa)valor != TipoPessoa.NaoDefinido)
-                .AdicionarValidacao(c => c.Telefones);
+        _clienteValidator = new ClienteValidator();
+    }
 
-            var resultados = validationBuilder.ValidarPropriedades();
-            var resultadosInvalidos = resultados.Invalidos();
+    public Dictionary<string, TiposDeValidacoes.Api.ValidationResult> ProcessarCliente(Cliente cliente)
+    {
+        var resultados = _clienteValidator.Validate(cliente);
 
-            return resultadosInvalidos;
-        }
+        return resultados.Errors
+            .GroupBy(e => "Cliente." + e.PropertyName) // Adicionado o prefixo "Cliente."
+            .ToDictionary(
+                g => g.Key,
+                g => new TiposDeValidacoes.Api.ValidationResult(false, g.First().ErrorMessage, g.Key)
+            );
+    }
 
-        public string GerarMensagemErro(Dictionary<string, ValidationResult> resultadosInvalidos)
-        {
-            var nomesCamposInvalidos = resultadosInvalidos.Keys.ToList();
-            var listaCamposInvalidos = string.Join(", ", nomesCamposInvalidos);
-            return $"Erro ao salvar o cliente. Os campos {listaCamposInvalidos} são obrigatórios.";
-        }
+    public string GerarMensagemErro(Dictionary<string, TiposDeValidacoes.Api.ValidationResult> resultadosInvalidos)
+    {
+        var nomesCamposInvalidos = resultadosInvalidos.Keys.ToList();
+        var listaCamposInvalidos = string.Join(", ", nomesCamposInvalidos);
+        return $"Erro ao salvar o cliente. Os campos {listaCamposInvalidos} são obrigatórios.";
     }
 }
