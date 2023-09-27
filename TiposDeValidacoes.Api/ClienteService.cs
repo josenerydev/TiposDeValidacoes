@@ -16,6 +16,9 @@ namespace TiposDeValidacoes.Api
 
         private bool DefaultValidation(object value)
         {
+            if (value is IEnumerable<object> collection)
+                return collection.All(v => v != null);
+
             return value != null && !string.IsNullOrWhiteSpace(value.ToString());
         }
     }
@@ -30,14 +33,15 @@ namespace TiposDeValidacoes.Api
         public Dictionary<string, bool> ProcessarCliente(Cliente cliente)
         {
             var resultados = ValidarPropriedades(
-               cliente,
-               Validate<Cliente>(c => c.Cpf, valor => !string.IsNullOrWhiteSpace(valor as string) && valor.ToString().Length == 11),
-               Validate<Cliente>(c => c.Nome),
-               Validate<Cliente>(c => c.Endereco.CEP),
-               Validate<Cliente>(c => c.Tipo, valor => (TipoPessoa)valor != TipoPessoa.Juridica)
+                cliente,
+                Validate<Cliente>(c => c.Cpf, valor => !string.IsNullOrWhiteSpace(valor as string) && valor.ToString().Length == 11),
+                Validate<Cliente>(c => c.Nome),
+                Validate<Cliente>(c => c.Endereco.CEP),
+                Validate<Cliente>(c => c.Tipo, valor => (TipoPessoa)valor != TipoPessoa.NaoDefinido),
+                Validate<Cliente>(c => c.Telefones) // Validação da lista de telefones
             ).Invalidos();
 
-            // Aqui você pode adicionar lógica adicional de processamento se necessário
+            // Lógica adicional de processamento, se necessário
 
             return resultados;
         }
@@ -73,6 +77,7 @@ namespace TiposDeValidacoes.Api
         }
     }
 
+    // Extensões de dicionário
     public static class DictionaryExtensions
     {
         public static Dictionary<string, bool> Invalidos(this Dictionary<string, bool> resultados)
