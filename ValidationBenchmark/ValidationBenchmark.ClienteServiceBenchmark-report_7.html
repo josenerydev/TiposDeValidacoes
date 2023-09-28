@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>ValidationBenchmark.ClienteServiceBenchmark-20230928-133525</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.13.8, Windows 10 (10.0.19045.3448/22H2/2022Update)
+Intel Core i5-8300H CPU 2.30GHz (Coffee Lake), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 7.0.401
+  [Host]     : .NET 6.0.22 (6.0.2223.42425), X64 RyuJIT AVX2
+  DefaultJob : .NET 6.0.22 (6.0.2223.42425), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method     </th><th>Cliente       </th><th>Mean </th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>Simples</td><td>Tipos(...)iente [29]</td><td>28.21 ns</td><td>0.325 ns</td><td>0.304 ns</td><td>0.0076</td><td>32 B</td>
+</tr><tr><td>Simples</td><td>Tipos(...)iente [29]</td><td>40.87 ns</td><td>0.408 ns</td><td>0.361 ns</td><td>0.0210</td><td>88 B</td>
+</tr><tr><td>Simples</td><td>Tipos(...)iente [29]</td><td>39.30 ns</td><td>0.285 ns</td><td>0.253 ns</td><td>0.0210</td><td>88 B</td>
+</tr><tr><td>ValidationBuilder</td><td>Tipos(...)iente [29]</td><td>7,012.65 ns</td><td>33.811 ns</td><td>26.397 ns</td><td>1.3962</td><td>5848 B</td>
+</tr><tr><td>ValidationBuilder</td><td>Tipos(...)iente [29]</td><td>7,054.71 ns</td><td>33.721 ns</td><td>26.328 ns</td><td>1.4191</td><td>5952 B</td>
+</tr><tr><td>ValidationBuilder</td><td>Tipos(...)iente [29]</td><td>7,071.89 ns</td><td>26.717 ns</td><td>23.684 ns</td><td>1.4496</td><td>6080 B</td>
+</tr><tr><td>FluentValidation</td><td>Tipos(...)iente [29]</td><td>6,818.62 ns</td><td>20.331 ns</td><td>19.018 ns</td><td>1.7166</td><td>7200 B</td>
+</tr><tr><td>FluentValidation</td><td>Tipos(...)iente [29]</td><td>7,529.55 ns</td><td>80.404 ns</td><td>71.276 ns</td><td>1.8311</td><td>7720 B</td>
+</tr><tr><td>FluentValidation</td><td>Tipos(...)iente [29]</td><td>4,959.15 ns</td><td>48.576 ns</td><td>37.925 ns</td><td>1.4267</td><td>5984 B</td>
+</tr></tbody></table>
+</body>
+</html>

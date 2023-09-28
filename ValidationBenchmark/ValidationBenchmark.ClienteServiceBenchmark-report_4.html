@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>ValidationBenchmark.ClienteServiceBenchmark-20230928-125742</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.13.8, Windows 10 (10.0.19045.3448/22H2/2022Update)
+Intel Core i5-8300H CPU 2.30GHz (Coffee Lake), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 7.0.401
+  [Host]     : .NET 6.0.22 (6.0.2223.42425), X64 RyuJIT AVX2
+  DefaultJob : .NET 6.0.22 (6.0.2223.42425), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method     </th><th>Cliente       </th><th>Mean </th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>Simples</td><td>Tipos(...)iente [29]</td><td>45.25 ns</td><td>0.306 ns</td><td>0.286 ns</td><td>0.0172</td><td>72 B</td>
+</tr><tr><td>Simples</td><td>Tipos(...)iente [29]</td><td>59.36 ns</td><td>0.441 ns</td><td>0.391 ns</td><td>0.0305</td><td>128 B</td>
+</tr><tr><td>Simples</td><td>Tipos(...)iente [29]</td><td>32.99 ns</td><td>0.330 ns</td><td>0.276 ns</td><td>0.0210</td><td>88 B</td>
+</tr><tr><td>ValidationBuilder</td><td>Tipos(...)iente [29]</td><td>6,986.28 ns</td><td>40.753 ns</td><td>34.030 ns</td><td>1.3962</td><td>5848 B</td>
+</tr><tr><td>ValidationBuilder</td><td>Tipos(...)iente [29]</td><td>7,301.48 ns</td><td>43.710 ns</td><td>40.886 ns</td><td>1.4191</td><td>5952 B</td>
+</tr><tr><td>ValidationBuilder</td><td>Tipos(...)iente [29]</td><td>7,223.53 ns</td><td>94.521 ns</td><td>88.415 ns</td><td>1.4496</td><td>6080 B</td>
+</tr><tr><td>FluentValidation</td><td>Tipos(...)iente [29]</td><td>7,047.89 ns</td><td>140.014 ns</td><td>327.278 ns</td><td>1.7166</td><td>7200 B</td>
+</tr><tr><td>FluentValidation</td><td>Tipos(...)iente [29]</td><td>7,452.31 ns</td><td>48.709 ns</td><td>38.028 ns</td><td>1.8311</td><td>7720 B</td>
+</tr><tr><td>FluentValidation</td><td>Tipos(...)iente [29]</td><td>5,094.57 ns</td><td>27.075 ns</td><td>25.326 ns</td><td>1.4267</td><td>5984 B</td>
+</tr></tbody></table>
+</body>
+</html>
