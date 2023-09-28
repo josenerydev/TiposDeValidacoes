@@ -12,12 +12,8 @@
                 .AdicionarValidacao(c => c.Telefones);
 
             var resultados = validationBuilder.ValidarPropriedades();
-            var resultadosInvalidos = resultados.Invalidos();
 
-            // Transforma o dicionário de resultados inválidos em uma lista de PropertyPath
-            var propertyPaths = resultadosInvalidos.Values.Select(v => v.PropertyPath).ToList();
-
-            return propertyPaths;
+            return resultados;
         }
     }
 }
