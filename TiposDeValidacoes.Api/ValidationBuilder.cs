@@ -48,22 +48,32 @@ namespace TiposDeValidacoes.Api
 
         public static string ValidateProperty(T objeto, PropertyValidation<T> propertyValidation)
         {
-            var member = propertyValidation.Property.Body as MemberExpression ??
-                         ((UnaryExpression)propertyValidation.Property.Body).Operand as MemberExpression;
-            if (member == null) throw new ArgumentException("A expressão deve ser uma propriedade.");
+            var expression = propertyValidation.Property.Body;
+
+            if (expression is UnaryExpression unaryExpression && unaryExpression.NodeType == ExpressionType.Convert)
+                expression = unaryExpression.Operand;
+
+            var memberExpression = expression as MemberExpression;
+
+            if (memberExpression == null)
+                throw new ArgumentException("A expressão deve ser uma propriedade.");
 
             object valor = objeto;
             var path = new List<string> { typeof(T).Name };
-            foreach (var part in member.ToString().Split('.').Skip(1))
+
+            foreach (var part in memberExpression.ToString().Split('.').Skip(1))
             {
                 if (valor == null) break;
+
                 var propertyInfo = valor.GetType().GetProperty(part);
-                if (propertyInfo == null) throw new ArgumentException($"Propriedade {part} não encontrada.");
+                if (propertyInfo == null)
+                    throw new ArgumentException($"Propriedade {part} não encontrada.");
+
                 valor = propertyInfo.GetValue(valor);
                 path.Add(part);
             }
 
-            var isValid = propertyValidation.Validation(valor);
+            var isValid = valor != null && propertyValidation.Validation(valor);
             return isValid ? null : string.Join(".", path);
         }
     }
