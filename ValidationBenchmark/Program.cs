@@ -5,5 +5,5 @@ using ValidationBenchmark;
 // See https://aka.ms/new-console-template for more information
 
 Console.WriteLine("Iniciando Benchmark...");
-var summary = BenchmarkRunner.Run<ClienteValidationBenchmark>();
+var summary = BenchmarkRunner.Run<ClienteServiceBenchmark>();
 Console.WriteLine("Benchmark concluído.");

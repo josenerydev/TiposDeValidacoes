@@ -6,33 +6,25 @@ namespace TiposDeValidacoes.Api
     [Route("api/[controller]")]
     public class ClientesController : ControllerBase
     {
-        private readonly ClienteService _clienteService;
+        private readonly ClienteServiceSimples _clienteService;
 
-        public ClientesController(ClienteService clienteService)
+        public ClientesController(ClienteServiceSimples clienteService)
         {
             _clienteService = clienteService;
         }
 
-        // POST: api/clientes/processar
         [HttpPost("processar")]
-        public ActionResult<Dictionary<string, bool>> ProcessarClienteComLista([FromBody] Cliente cliente)
+        public ActionResult ProcessarClienteComLista([FromBody] Cliente cliente)
         {
-            try
-            {
-                var resultadosInvalidos = _clienteService.ProcessarCliente(cliente);
+            var erros = _clienteService.ProcessarCliente(cliente);
 
-                if (resultadosInvalidos.Any())
-                {
-                    var mensagemErro = _clienteService.GerarMensagemErro(resultadosInvalidos);
-                    throw new ArgumentException(mensagemErro);
-                }
-
-                return Ok();
-            }
-            catch (Exception ex)
+            if (erros.Count > 0)
             {
-                return BadRequest(new { message = ex.Message });
+                var mensagemErro = _clienteService.GerarMensagemErro(erros);
+                return BadRequest(new { message = mensagemErro });
             }
+
+            return Ok();
         }
     }
 }
