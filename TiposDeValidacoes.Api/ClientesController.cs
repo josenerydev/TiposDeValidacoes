@@ -20,11 +20,21 @@ namespace TiposDeValidacoes.Api
 
             if (erros.Count > 0)
             {
-                var mensagemErro = _clienteService.GerarMensagemErro(erros);
+                var mensagemErro = GerarMensagemErro(erros);
                 return BadRequest(new { message = mensagemErro });
             }
 
             return Ok();
+        }
+
+        private string GerarMensagemErro(List<string> erros)
+        {
+            var palavraCampo = erros.Count > 1 ? "campos" : "campo";
+            var palavraObrigatorio = erros.Count > 1 ? "são" : "é";
+            var validade = erros.Count > 1 ? "devem ser válidos" : "deve ser válido";
+
+            var camposInvalidos = string.Join(", ", erros);
+            return $"Erro ao salvar o cliente. O {palavraCampo} {camposInvalidos} {palavraObrigatorio} obrigatório(s) e {validade}.";
         }
     }
 }
