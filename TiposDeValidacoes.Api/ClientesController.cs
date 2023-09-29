@@ -16,11 +16,11 @@ namespace TiposDeValidacoes.Api
         [HttpPost("processar")]
         public ActionResult ProcessarClienteComLista([FromBody] Cliente cliente)
         {
-            var erros = _clienteService.ProcessarCliente(cliente);
+            var erros = _clienteService.ProcessarCliente_v1(cliente);
 
-            if (erros.Count > 0)
+            if (erros.Count() > 0)
             {
-                var mensagemErro = GerarMensagemErro(erros);
+                var mensagemErro = GerarMensagemErro(erros.ToList());
                 return BadRequest(new { message = mensagemErro });
             }
 

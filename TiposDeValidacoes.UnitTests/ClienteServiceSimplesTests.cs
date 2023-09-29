@@ -25,7 +25,7 @@ namespace TiposDeValidacoes.Tests
             };
 
             // Act
-            var erros = _service.ProcessarCliente(cliente);
+            var erros = _service.ProcessarCliente_v1(cliente);
 
             // Assert
             Assert.Empty(erros);
@@ -38,7 +38,7 @@ namespace TiposDeValidacoes.Tests
             var cliente = new Cliente(); // Cliente sem propriedades obrigatórias
 
             // Act
-            var erros = _service.ProcessarCliente(cliente);
+            var erros = _service.ProcessarCliente_v1(cliente);
 
             // Assert
             Assert.Contains("Nome", erros);
@@ -69,7 +69,7 @@ namespace TiposDeValidacoes.Tests
             };
 
             // Act
-            var erros = _service.ProcessarCliente(cliente);
+            var erros = _service.ProcessarCliente_v1(cliente);
 
             // Assert
             Assert.Single(erros); // Espera-se apenas um erro

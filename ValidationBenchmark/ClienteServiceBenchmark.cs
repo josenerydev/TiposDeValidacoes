@@ -62,21 +62,33 @@ namespace ValidationBenchmark
         }
 
         [Benchmark]
-        public List<string> Simples()
+        public List<string> ProcessarCliente_v1()
         {
-            return _clienteServiceSimples.ProcessarCliente(Cliente);
+            return _clienteServiceSimples.ProcessarCliente_v1(Cliente);
         }
 
         [Benchmark]
-        public List<string> ValidationBuilder()
+        public string[] ProcessarCliente_v2()
         {
-            return _clienteServiceValidationBuilderService.ProcessarCliente(Cliente);
+            return _clienteServiceSimples.ProcessarCliente_v2(Cliente);
         }
 
         [Benchmark]
-        public List<string> FluentValidation()
+        public List<string> ProcessarCliente_v3()
         {
-            return _clienteServiceFluentValidationService.ProcessarCliente(Cliente);
+            return _clienteServiceSimples.ProcessarCliente_v1(Cliente);
         }
+
+        //[Benchmark]
+        //public List<string> ValidationBuilder()
+        //{
+        //    return _clienteServiceValidationBuilderService.ProcessarCliente(Cliente);
+        //}
+
+        //[Benchmark]
+        //public List<string> FluentValidation()
+        //{
+        //    return _clienteServiceFluentValidationService.ProcessarCliente(Cliente);
+        //}
     }
 }
